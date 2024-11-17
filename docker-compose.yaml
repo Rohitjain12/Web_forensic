@@ -9,4 +9,4 @@ services:
       - .:/app
     environment:
       - FLASK_ENV=development
-    command: ./start.sh  # Ensure the start.sh script is run when the container starts
+    command: python app.py && python Os_Network_analysis.py # Ensure the start.sh script is run when the container starts
