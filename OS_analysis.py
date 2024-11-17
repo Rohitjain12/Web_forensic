@@ -1,5 +1,6 @@
 import psutil
 import time
+import logging
 
 # Thresholds for detecting potential DoS attacks
 CPU_THRESHOLD = 85  # CPU usage percentage considered as abnormal
@@ -14,11 +15,16 @@ previous_recv = psutil.net_io_counters().bytes_recv
 # Whitelisted applications (process names)
 WHITELISTED_APPS = ["python", "chrome", "explorer", "systemd", "bash"]  # Add more as needed
 
+# Set up logging
+logging.basicConfig(filename='system_monitor_log.txt', level=logging.INFO, format='%(asctime)s - %(message)s')
+
 def check_cpu_usage():
     """Check if CPU usage is above the threshold."""
     cpu_usage = psutil.cpu_percent(interval=1)
     if cpu_usage > CPU_THRESHOLD:
-        print(f"[ALERT] High CPU usage detected: {cpu_usage}%")
+        alert_message = f"[ALERT] High CPU usage detected: {cpu_usage}%"
+        logging.info(alert_message)
+        print(alert_message)
         return True
     return False
 
@@ -26,7 +32,9 @@ def check_memory_usage():
     """Check if memory usage is above the threshold."""
     memory_info = psutil.virtual_memory()
     if memory_info.percent > MEMORY_THRESHOLD:
-        print(f"[ALERT] High Memory usage detected: {memory_info.percent}%")
+        alert_message = f"[ALERT] High Memory usage detected: {memory_info.percent}%"
+        logging.info(alert_message)
+        print(alert_message)
         return True
     return False
 
@@ -34,7 +42,9 @@ def check_disk_usage():
     """Check if disk usage is above the threshold."""
     disk_info = psutil.disk_usage('/')
     if disk_info.percent > DISK_THRESHOLD:
-        print(f"[ALERT] High Disk usage detected: {disk_info.percent}%")
+        alert_message = f"[ALERT] High Disk usage detected: {disk_info.percent}%"
+        logging.info(alert_message)
+        print(alert_message)
         return True
     return False
 
@@ -55,7 +65,9 @@ def check_network_usage():
     mb_recv_per_sec = bytes_recv_per_sec / (1024 * 1024)
     
     if mb_recv_per_sec > (NETWORK_THRESHOLD / (1024 * 1024)):
-        print(f"[ALERT] High Network traffic detected: {mb_recv_per_sec:.2f} MB/s")
+        alert_message = f"[ALERT] High Network traffic detected: {mb_recv_per_sec:.2f} MB/s"
+        logging.info(alert_message)
+        print(alert_message)
         return True
     return False
 
@@ -72,7 +84,9 @@ def check_running_processes():
             pass
     
     if non_whitelisted_processes:
-        print(f"[ALERT] Non-whitelisted applications detected: {', '.join(non_whitelisted_processes)}")
+        alert_message = f"[ALERT] Non-whitelisted applications detected: {', '.join(non_whitelisted_processes)}"
+        logging.info(alert_message)
+        print(alert_message)
         return True
     return False
 
@@ -88,7 +102,9 @@ def monitor_system(interval=5):
             process_alert = check_running_processes()
             
             if cpu_alert or memory_alert or disk_alert or network_alert or process_alert:
-                print("[WARNING] Potential issue detected! Possible DoS attack or unauthorized application running.")
+                warning_message = "[WARNING] Potential issue detected! Possible DoS attack or unauthorized application running."
+                logging.warning(warning_message)
+                print(warning_message)
             else:
                 print("System is operating normally.")
             
