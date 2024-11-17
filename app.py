@@ -36,13 +36,14 @@ def status():
 @app.route('/curl', methods=['POST'])
 def curl():
     # Get the URL from the form data
-    url = request.form.get("url")
+    url = request.form.get("ip")
     
     # Log the URL for debugging purposes
     app.logger.info(f"Received URL to curl: {url}")
 
     # Prepare the curl command
     command = f"curl {url}"
+    print("command ",command)
 
     try:
         # Run the curl command

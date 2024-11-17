@@ -7,6 +7,7 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
+      - E:\CSDF project\Web_forensic\mount
     environment:
       - FLASK_ENV=development
-    command: python app.py && python Os_Network_analysis.py # Ensure the start.sh script is run when the container starts
+    command: python app.py # Ensure the start.sh script is run when the container starts

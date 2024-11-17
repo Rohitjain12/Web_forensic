@@ -1,0 +1,1 @@
+docker-compose exec flask-app python Os_Network_analysis.py
