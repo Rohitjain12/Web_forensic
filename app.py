@@ -14,15 +14,10 @@ app.logger.addHandler(file_handler)
 
 @app.route('/ping', methods=['POST'])
 def ping():
-    # Retrieve the 'ip' parameter from the POST request
     ip = request.form.get("ip")
-    
-    # Log the IP address of the client who sent the request
     client_ip = request.remote_addr
     app.logger.info(f"Received request from client IP: {client_ip} ,Received IP for ping: {ip}")
-
-    print(f"ping -c 1 {ip}")
-
+    
     try:
         output = subprocess.check_output(f"ping -c 1 {ip}", shell=True, text=True)
         app.logger.info(f"Ping output: {output}")
@@ -34,15 +29,33 @@ def ping():
         app.logger.error(f"Unexpected error: {str(e)}")
         return jsonify({"status": "error", "message": "Unexpected error occurred", "error": str(e)}), 500
 
-
 @app.route('/status', methods=['GET'])
 def status():
-    # Simple GET request to check if the server is running
     return jsonify({"status": "Server is up and running!"}), 200
 
+@app.route('/curl', methods=['POST'])
+def curl():
+    # Get the URL from the form data
+    url = request.form.get("url")
+    
+    # Log the URL for debugging purposes
+    app.logger.info(f"Received URL to curl: {url}")
+
+    # Prepare the curl command
+    command = f"curl {url}"
+
+    try:
+        # Run the curl command
+        output = subprocess.check_output(command, shell=True, text=True)
+        app.logger.info(f"Curl output: {output}")
+        return jsonify({"status": "success", "message": "Curl request successful", "url": url, "output": output}), 200
+    except subprocess.CalledProcessError as e:
+        app.logger.error(f"Error during curl command execution: {str(e)}")
+        return jsonify({"status": "error", "message": "Error with curl request", "error": str(e)}), 500
+    except Exception as e:
+        app.logger.error(f"Unexpected error: {str(e)}")
+        return jsonify({"status": "error", "message": "Unexpected error occurred", "error": str(e)}), 500
 
 if __name__ == '__main__':
-    # Ensure directory for file writes exists, if needed
     os.makedirs("uploads", exist_ok=True)
     app.run(debug=True, host='0.0.0.0', port=5000)
-
