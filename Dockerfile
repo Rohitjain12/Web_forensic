@@ -1,24 +1,50 @@
-# Use the official Python image from the Docker Hub
+# Use the official Python image from Docker Hub
 FROM python:3.9-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy all files from the local directory to the container's working directory
-COPY . /app
 
-# Install the necessary Python dependencies from requirements.txt
+# Install dependencies, including libpcap-dev, python3-pcapy, curl, and cleanup cache to reduce image size
+RUN apt-get update && apt-get install -y \
+    libpcap-dev \
+    python3-pcapy \
+    iproute2 \
+    net-tools \
+    curl \
+    procps && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir scapy
+
+
+# Copy requirements file and install dependencies
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application files
+COPY . /app
 
 # Expose the Flask app port (default 5000)
 EXPOSE 5000
 
+# Add a healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD curl --fail http://localhost:5000 || exit 1
+
 # Create and give execute permission for start.sh
 RUN echo "#!/bin/sh\n\
-python app.py &\n\
-python network_analysis.py &\n\
-python os_analysis.py &\n\
-wait" > start.sh && chmod +x start.sh
+mkdir -p /app/logs\n\
+python app.py \
 
+python network_analysis.py > \
+wait\n\
+" > start.sh && chmod +x start.sh
+# python os_analysis.py > \
 # Set the command to run the start.sh script when the container starts
-CMD ["./start.sh"]
+CMD ["sh", "./start.sh"]
+CMD ["python", "os_analysis.py"]
+
+# python app.py > /app/logs/app.log 2>&1 &\n\
+# python os_analysis.py > /app/logs/os.log 2>&1 &\n\
+# python network_analysis.py > /app/logs/network.log 2>&1 &\n\

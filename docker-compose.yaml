@@ -7,7 +7,16 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - E:\CSDF project\Web_forensic\mount
+      - /d/code/mount:/app/output  # Corrected mount path
     environment:
       - FLASK_ENV=development
-    command: python app.py # Ensure the start.sh script is run when the container starts
+    command: ./start.sh # Ensure the start.sh script is run when the container starts
+    # command: python network_analysis.py
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'      # Limit to 1 CPU core
+          memory: 512M      # Limit to 512 MB of memory
+        reservations:
+          cpus: '0.5'      # Reserve half of a CPU core
+          memory: 256M      # Reserve 256 MB of memory

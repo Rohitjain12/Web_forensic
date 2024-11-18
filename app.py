@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 log_format = '%(asctime)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
-file_handler = logging.FileHandler('server_log.log')
+file_handler = logging.FileHandler('logs/server_log.log')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter(log_format))
 app.logger.addHandler(file_handler)
