@@ -15,6 +15,7 @@ env/
 
 # Logs
 *.log
+/logs
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
@@ -37,3 +38,5 @@ Thumbs.db
 model.pth
 server_mapping.json
 
+github_ssh_pubprikey.pub
+github_ssh_pubprikey
